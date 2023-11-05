@@ -9,4 +9,4 @@ feature request as a new Issue.
 For help and questions about using this project, please create an issue with the label "question".
 
 ## Microsoft Support Policy  
-Support for this **PROJECT** is limited to the resources listed above.
+Support for `monitors4codegen` is limited to the resources listed above.
