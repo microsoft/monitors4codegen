@@ -18,6 +18,25 @@ MGD uses static analysis to guide the decoding of LMs, to generate code followin
 
 ![](figures/motivating_example.png)
 
+## Environment Setup
+We use the Python packages listed in [requirements.txt](requirements.txt). Our experiments used python 3.10. It is recommended to install the same with dependencies in an isolated virtual environment. To create a virtual environment using `venv`:
+```setup
+python3 -m venv venv_monitors4codegen
+source venv_monitors4codegen/bin/activate
+```
+or using conda:
+```
+conda create -n monitors4codegen python=3.10
+conda activate monitors4codegen
+```
+Further details and instructions on creation of python virtual environments can be found in the [official documentation](https://docs.python.org/3/library/venv.html). Further, we also refer users to [Miniconda](https://docs.conda.io/en/latest/miniconda.html), as an alternative to the above steps for creation of the virtual environment.
+
+To install the requirements for running evaluations as described [below](#2-evaluation-scripts):
+
+```setup
+pip3 install -r requirements.txt
+```
+
 ## 1. Datasets
 
 ### Dataset Statistics
@@ -38,25 +57,6 @@ DotPrompts is a set of testcases derived from PragmaticCode, such that each test
 The complete description of a testcase in DotPrompts is a tuple - `(repo, classFileName, methodStartIdx, methodStopIdx, dot_idx)`. The dataset is available at [datasets/DotPrompts/dataset.csv](datasets/DotPrompts/dataset.csv).
 
 ## 2. Evaluation Scripts
-### Environment Setup
-We use the Python packages listed in [requirements.txt](requirements.txt). Our experiments used python 3.10. It is recommended to install the same with dependencies in an isolated virtual environment. To create a virtual environment using `venv`:
-```setup
-python3 -m venv venv_monitors4codegen
-source venv_monitors4codegen/bin/activate
-```
-or using conda:
-```
-conda create -n monitors4codegen python=3.10
-conda activate monitors4codegen
-```
-Further details and instructions on creation of python virtual environments can be found in the [official documentation](https://docs.python.org/3/library/venv.html). Further, we also refer users to [Miniconda](https://docs.conda.io/en/latest/miniconda.html), as an alternative to the above steps for creation of the virtual environment.
-
-To install the requirements for running evaluation as described below:
-
-```setup
-pip3 install -r requirements.txt
-```
-
 ### Running the evaluation script
 The evaluation script can be run as follows:
 ```
@@ -101,8 +101,49 @@ python3 evaluation_scripts/eval_results.py inference_results/dotprompts_results.
 The above command creates a directory [results](results/) (already included in the repository), containing all the figures and tables provided in the paper along with extra details. The command also generates a report in the output directory which relates the generated figures to sections in the paper. In case of above command, the report is generated at [results/Report.md](results/Report.md).
 
 ## 4. `multilspy`
+`multilspy` is a cross-platform library to set up and interact with various language servers in a unified and easy way. [Language servers]((https://microsoft.github.io/language-server-protocol/overviews/lsp/overview/)) are tools that perform a variety of static analyses on source code and provide useful information such as type-directed code completion suggestions, symbol definition locations, symbol references, etc., over the [Language Server Protocol (LSP)](https://microsoft.github.io/language-server-protocol/overviews/lsp/overview/). `multilspy` intends to ease the process of using language servers, by abstracting the setting up of the language servers, performing language-specific configuration and handling communication with the server over the json-rpc based protocol, while exposing a simple interface to the user.
 
-Coming Soon...
+Since LSP is language-agnostic, `multilspy` can provide the results for static analyses of code in different languages over a common interface. `multilspy` is easily extensible to any language that has a Language Server and currently supports Java, Rust, C# and Python and we aim to support more language servers from the [list of language server implementations](https://microsoft.github.io/language-server-protocol/implementors/servers/).
+
+Some of the analyses results that `multilspy` can provide are:
+- Finding the definition of a function or a class ([textDocument/definition](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_definition))
+- Finding the callers of a function or the instantiations of a class ([textDocument/references](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_references))
+- Providing type-based dereference completions ([textDocument/completion](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_completion))
+
+Example usage:
+```python
+from multilspy import SyncLanguageServer
+from multilspy.multilspy_config import MultilspyConfig
+from multilspy.multilspy_logger import MultilspyLogger
+...
+config = MultilspyConfig.from_dict({"code_language": "java"})
+logger = MultilspyLogger()
+lsp = SyncLanguageServer.create(config, logger, "/abs/path/to/project/root/")
+with lsp.start_server():
+    result = lsp.request_definition(
+        "relative/path/to/code_file.java", # Filename of location where request is being made
+        163, # line number of symbol for which request is being made
+        4 # column number of symbol for which request is being made
+    )
+    ...
+```
+
+`multilspy` also provides an asyncio based API which can be used in async contexts. Example usage (asyncio):
+```python
+from multilspy import LanguageServer
+...
+lsp = LanguageServer.create(...)
+async with lsp.start_server():
+    result = await lsp.request_definition(
+        ...
+    )
+    ...
+```
+
+Several tests for `multilspy` present under [tests/multilspy/](tests/multilspy/) provide detailed usage examples for `multilspy`. The tests can be executed by running:
+```bash
+pytest tests/multilspy
+```
 
 ## 5. Monitor-Guided Decoding
 
