@@ -49,7 +49,7 @@ pip3 install -r requirements.txt
 ### PragmaticCode
 PragmaticCode is a dataset of real-world open-source Java projects complete with their development environments and dependencies (through their respective build systems). The authors tried to ensure that all the repositories in PragmaticCode were released publicly only after the determined training dataset cutoff date (31 March 2022) for the CodeGen, SantaCoder and text-davinci-003 family of models, which were used to evaluate MGD.
 
-The list of repositories along with their respective licenses consisting PragmaticCode is available in [datasets/PragmaticCode/repos.txt](datasets/PragmaticCode/repos.txt). The contents of the files required for inference for each of the repositories is available in [datasets/PragmaticCode/fileContentsByRepo.json](datasets/PragmaticCode/fileContentsByRepo.json).
+The list of repositories along with their respective licenses consisting PragmaticCode is available in [datasets/PragmaticCode/repos.csv](datasets/PragmaticCode/repos.csv). The contents of the files required for inference for each of the repositories is available in [datasets/PragmaticCode/fileContentsByRepo.json](datasets/PragmaticCode/fileContentsByRepo.json).
 
 ### DotPrompts
 DotPrompts is a set of testcases derived from PragmaticCode, such that each testcase consists of a prompt to a dereference location (a code location having the "." operator in Java). The scenario described in [motivating example above](#monitor-guided-decoding-motivating-example) is an example of a testcase in DotPrompts. 
