@@ -7,14 +7,14 @@ import code_tokenize as ctok
 from typing import List, Union, Set
 from enum import Enum
 
-from multilspy import multilspy_types
-from multilspy.multilspy_config import Language
-from multilspy.multilspy_utils import TextUtils
-from multilspy.multilspy_types import Position
+from monitors4codegen.multilspy import multilspy_types
+from monitors4codegen.multilspy.multilspy_config import Language
+from monitors4codegen.multilspy.multilspy_utils import TextUtils
+from monitors4codegen.multilspy.multilspy_types import Position
 
-from monitor_guided_decoding.monitor import Monitor, MonitorFileBuffer
-from monitor_guided_decoding.tokenizer_wrapper import TokenizerWrapper
-from monitor_guided_decoding.mgd_utils import PLUtils
+from monitors4codegen.monitor_guided_decoding.monitor import Monitor, MonitorFileBuffer
+from monitors4codegen.monitor_guided_decoding.tokenizer_wrapper import TokenizerWrapper
+from monitors4codegen.monitor_guided_decoding.mgd_utils import PLUtils
 
 
 class DecoderStates(Enum):

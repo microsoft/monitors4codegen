@@ -117,9 +117,9 @@ pytest tests/multilspy
 
 Example usage:
 ```python
-from multilspy import SyncLanguageServer
-from multilspy.multilspy_config import MultilspyConfig
-from multilspy.multilspy_logger import MultilspyLogger
+from monitors4codegen.multilspy import SyncLanguageServer
+from monitors4codegen.multilspy.multilspy_config import MultilspyConfig
+from monitors4codegen.multilspy.multilspy_logger import MultilspyLogger
 ...
 config = MultilspyConfig.from_dict({"code_language": "java"})
 logger = MultilspyLogger()
@@ -135,7 +135,7 @@ with lsp.start_server():
 
 `multilspy` also provides an asyncio based API which can be used in async contexts. Example usage (asyncio):
 ```python
-from multilspy import LanguageServer
+from monitors4codegen.multilspy import LanguageServer
 ...
 lsp = LanguageServer.create(...)
 async with lsp.start_server():

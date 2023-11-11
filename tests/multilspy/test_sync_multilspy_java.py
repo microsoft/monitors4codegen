@@ -3,8 +3,8 @@ This file contains tests for running the Java Language Server: Eclipse JDT.LS
 """
 
 from pathlib import PurePath
-from multilspy import SyncLanguageServer
-from multilspy.multilspy_config import Language
+from monitors4codegen.multilspy import SyncLanguageServer
+from monitors4codegen.multilspy.multilspy_config import Language
 from tests.test_utils import create_test_context
 
 def test_multilspy_java_clickhouse_highlevel_sinker() -> None:
