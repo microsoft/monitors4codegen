@@ -17,7 +17,11 @@ classifiers = [
     "Operating System :: OS Independent",
     "Development Status :: 2 - Pre-Alpha",
     "Topic :: Software Development",
-    "Topic :: Text Editors :: Integrated Development Environments (IDE)"
+    "Topic :: Text Editors :: Integrated Development Environments (IDE)",
+    "Programming Language :: C#",
+    "Programming Language :: Java",
+    "Programming Language :: Python",
+    "Programming Language :: Rust"
 ]
 
 dependencies = [
