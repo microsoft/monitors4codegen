@@ -14,14 +14,14 @@ import uuid
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
-from multilspy.multilspy_logger import MultilspyLogger
-from multilspy.language_server import LanguageServer
-from multilspy.lsp_protocol_handler.server import ProcessLaunchInfo
-from multilspy.lsp_protocol_handler.lsp_types import InitializeParams
-from multilspy.multilspy_config import MultilspyConfig
-from multilspy.multilspy_settings import MultilspySettings
-from multilspy.multilspy_utils import FileUtils
-from multilspy.multilspy_utils import PlatformUtils
+from monitors4codegen.multilspy.multilspy_logger import MultilspyLogger
+from monitors4codegen.multilspy.language_server import LanguageServer
+from monitors4codegen.multilspy.lsp_protocol_handler.server import ProcessLaunchInfo
+from monitors4codegen.multilspy.lsp_protocol_handler.lsp_types import InitializeParams
+from monitors4codegen.multilspy.multilspy_config import MultilspyConfig
+from monitors4codegen.multilspy.multilspy_settings import MultilspySettings
+from monitors4codegen.multilspy.multilspy_utils import FileUtils
+from monitors4codegen.multilspy.multilspy_utils import PlatformUtils
 from pathlib import PurePath
 
 

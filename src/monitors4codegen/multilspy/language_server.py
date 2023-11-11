@@ -13,21 +13,21 @@ import os
 import pathlib
 import threading
 from contextlib import asynccontextmanager, contextmanager
-from multilspy.lsp_protocol_handler.lsp_constants import LSPConstants
-import multilspy.lsp_protocol_handler.lsp_types as LSPTypes
+from .lsp_protocol_handler.lsp_constants import LSPConstants
+from  .lsp_protocol_handler import lsp_types as LSPTypes
 
-from multilspy import multilspy_types
-from multilspy.multilspy_logger import MultilspyLogger
-from multilspy.lsp_protocol_handler.server import (
+from . import multilspy_types
+from .multilspy_logger import MultilspyLogger
+from .lsp_protocol_handler.server import (
     LanguageServerHandler,
     ProcessLaunchInfo,
 )
-from multilspy.multilspy_config import MultilspyConfig, Language
-from multilspy.multilspy_exceptions import MultilspyException
-from multilspy.multilspy_utils import PathUtils, FileUtils, TextUtils
+from .multilspy_config import MultilspyConfig, Language
+from .multilspy_exceptions import MultilspyException
+from .multilspy_utils import PathUtils, FileUtils, TextUtils
 from pathlib import PurePath
 from typing import AsyncIterator, Iterator, List, Dict, Union
-from multilspy.type_helpers import ensure_all_methods_implemented
+from .type_helpers import ensure_all_methods_implemented
 
 
 @dataclasses.dataclass
@@ -72,25 +72,25 @@ class LanguageServer:
         :return LanguageServer: A language specific LanguageServer instance.
         """
         if config.code_language == Language.PYTHON:
-            from multilspy.language_servers.jedi_language_server.jedi_server import (
+            from monitors4codegen.multilspy.language_servers.jedi_language_server.jedi_server import (
                 JediServer,
             )
 
             return JediServer(config, logger, repository_root_path)
         elif config.code_language == Language.JAVA:
-            from multilspy.language_servers.eclipse_jdtls.eclipse_jdtls import (
+            from monitors4codegen.multilspy.language_servers.eclipse_jdtls.eclipse_jdtls import (
                 EclipseJDTLS,
             )
 
             return EclipseJDTLS(config, logger, repository_root_path)
         elif config.code_language == Language.RUST:
-            from multilspy.language_servers.rust_analyzer.rust_analyzer import (
+            from monitors4codegen.multilspy.language_servers.rust_analyzer.rust_analyzer import (
                 RustAnalyzer,
             )
 
             return RustAnalyzer(config, logger, repository_root_path)
         elif config.code_language == Language.CSHARP:
-            from multilspy.language_servers.omnisharp.omnisharp import OmniSharp
+            from monitors4codegen.multilspy.language_servers.omnisharp.omnisharp import OmniSharp
 
             return OmniSharp(config, logger, repository_root_path)
         else:

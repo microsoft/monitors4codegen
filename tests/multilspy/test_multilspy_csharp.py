@@ -4,9 +4,9 @@ This file contains tests for running the C# Language Server: OmniSharp
 
 import pytest
 
-from multilspy import LanguageServer
-from multilspy.multilspy_config import Language
-from multilspy.multilspy_types import Position, CompletionItemKind
+from monitors4codegen.multilspy import LanguageServer
+from monitors4codegen.multilspy.multilspy_config import Language
+from monitors4codegen.multilspy.multilspy_types import Position, CompletionItemKind
 from tests.test_utils import create_test_context
 from pathlib import PurePath
 

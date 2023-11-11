@@ -5,16 +5,16 @@ import transformers
 import pytest
 
 from pathlib import PurePath
-from multilspy.language_server import SyncLanguageServer
-from multilspy.multilspy_config import Language
+from monitors4codegen.multilspy.language_server import SyncLanguageServer
+from monitors4codegen.multilspy.multilspy_config import Language
 from tests.test_utils import create_test_context
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from multilspy.multilspy_utils import TextUtils
-from monitor_guided_decoding.dereferences_monitor import DereferencesMonitor
-from monitor_guided_decoding.monitor import MonitorFileBuffer, MGDLogitsProcessor
+from monitors4codegen.multilspy.multilspy_utils import TextUtils
+from monitors4codegen.monitor_guided_decoding.dereferences_monitor import DereferencesMonitor
+from monitors4codegen.monitor_guided_decoding.monitor import MonitorFileBuffer, MGDLogitsProcessor
 from transformers.generation.utils import LogitsProcessorList
-from multilspy.multilspy_types import Position
-from monitor_guided_decoding.tokenizer_wrapper import HFTokenizerWrapper
+from monitors4codegen.multilspy.multilspy_types import Position
+from monitors4codegen.monitor_guided_decoding.tokenizer_wrapper import HFTokenizerWrapper
 
 pytest_plugins = ("pytest_asyncio",)
 

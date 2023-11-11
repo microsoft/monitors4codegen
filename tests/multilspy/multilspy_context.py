@@ -3,8 +3,8 @@ Provides the MultilspyContext class, which stores the context for a Multilspy te
 """
 
 import dataclasses
-from multilspy.multilspy_config import MultilspyConfig
-from multilspy.multilspy_logger import MultilspyLogger
+from monitors4codegen.multilspy.multilspy_config import MultilspyConfig
+from monitors4codegen.multilspy.multilspy_logger import MultilspyLogger
 
 @dataclasses.dataclass
 class MultilspyContext:

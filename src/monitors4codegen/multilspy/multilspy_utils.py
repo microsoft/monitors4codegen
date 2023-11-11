@@ -14,9 +14,9 @@ import platform
 import subprocess
 from enum import Enum
 
-from multilspy.multilspy_exceptions import MultilspyException
+from monitors4codegen.multilspy.multilspy_exceptions import MultilspyException
 from pathlib import PurePath, Path
-from multilspy.multilspy_logger import MultilspyLogger
+from monitors4codegen.multilspy.multilspy_logger import MultilspyLogger
 
 class TextUtils:
     """

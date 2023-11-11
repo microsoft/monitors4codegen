@@ -8,11 +8,11 @@ import torch
 from asyncio.events import AbstractEventLoop
 from typing import List, Tuple, Union
 from transformers import LogitsProcessor
-from monitor_guided_decoding.tokenizer_wrapper import TokenizerWrapper
-from multilspy import LanguageServer
-from multilspy.multilspy_config import Language
+from monitors4codegen.monitor_guided_decoding.tokenizer_wrapper import TokenizerWrapper
+from monitors4codegen.multilspy import LanguageServer
+from monitors4codegen.multilspy.multilspy_config import Language
 from dataclasses import dataclass
-from multilspy.multilspy_utils import TextUtils
+from monitors4codegen.multilspy.multilspy_utils import TextUtils
 
 
 @dataclass

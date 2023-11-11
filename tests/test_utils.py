@@ -3,12 +3,12 @@ import pathlib
 import contextlib
 import shutil
 
-from multilspy.multilspy_config import MultilspyConfig
-from multilspy.multilspy_logger import MultilspyLogger
+from monitors4codegen.multilspy.multilspy_config import MultilspyConfig
+from monitors4codegen.multilspy.multilspy_logger import MultilspyLogger
 from tests.multilspy.multilspy_context import MultilspyContext
 from typing import Iterator
 from uuid import uuid4
-from multilspy.multilspy_utils import FileUtils
+from monitors4codegen.multilspy.multilspy_utils import FileUtils
 
 @contextlib.contextmanager
 def create_test_context(params: dict) -> Iterator[MultilspyContext]:

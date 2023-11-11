@@ -2,8 +2,8 @@
 This file contains tests for running the Python Language Server: jedi-language-server
 """
 
-from multilspy import SyncLanguageServer
-from multilspy.multilspy_config import Language
+from monitors4codegen.multilspy import SyncLanguageServer
+from monitors4codegen.multilspy.multilspy_config import Language
 from tests.test_utils import create_test_context
 from pathlib import PurePath
 

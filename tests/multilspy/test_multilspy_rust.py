@@ -5,8 +5,8 @@ This file contains tests for running the Rust Language Server: rust-analyzer
 import unittest
 import pytest
 
-from multilspy import LanguageServer
-from multilspy.multilspy_config import Language
+from monitors4codegen.multilspy import LanguageServer
+from monitors4codegen.multilspy.multilspy_config import Language
 from tests.test_utils import create_test_context
 from pathlib import PurePath
 

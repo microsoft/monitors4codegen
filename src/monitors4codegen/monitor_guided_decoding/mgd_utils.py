@@ -5,7 +5,7 @@ This module provides the utility functions for handling programming language tex
 import code_tokenize as ctok
 
 from typing import List
-from multilspy.multilspy_config import Language
+from monitors4codegen.multilspy.multilspy_config import Language
 
 
 class PLUtils:
