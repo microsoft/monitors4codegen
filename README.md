@@ -18,25 +18,6 @@ MGD uses static analysis to guide the decoding of LMs, to generate code followin
 
 ![](figures/motivating_example.png)
 
-## Environment Setup
-We use the Python packages listed in [requirements.txt](requirements.txt). Our experiments used python 3.10. It is recommended to install the same with dependencies in an isolated virtual environment. To create a virtual environment using `venv`:
-```setup
-python3 -m venv venv_monitors4codegen
-source venv_monitors4codegen/bin/activate
-```
-or using conda:
-```
-conda create -n monitors4codegen python=3.10
-conda activate monitors4codegen
-```
-Further details and instructions on creation of python virtual environments can be found in the [official documentation](https://docs.python.org/3/library/venv.html). Further, we also refer users to [Miniconda](https://docs.conda.io/en/latest/miniconda.html), as an alternative to the above steps for creation of the virtual environment.
-
-To install the requirements for running evaluations as described [below](#2-evaluation-scripts):
-
-```setup
-pip3 install -r requirements.txt
-```
-
 ## 1. Datasets
 
 ### Dataset Statistics
@@ -57,6 +38,25 @@ DotPrompts is a set of examples derived from PragmaticCode, such that each examp
 The complete description of an example in DotPrompts is a tuple - `(repo, classFileName, methodStartIdx, methodStopIdx, dot_idx)`. The dataset is available at [datasets/DotPrompts/dataset.csv](datasets/DotPrompts/dataset.csv).
 
 ## 2. Evaluation Scripts
+### Environment Setup
+We use the Python packages listed in [requirements.txt](requirements.txt). Our experiments used python 3.10. It is recommended to install the same with dependencies in an isolated virtual environment. To create a virtual environment using `venv`:
+```setup
+python3 -m venv venv_monitors4codegen
+source venv_monitors4codegen/bin/activate
+```
+or using conda:
+```
+conda create -n monitors4codegen python=3.10
+conda activate monitors4codegen
+```
+Further details and instructions on creation of python virtual environments can be found in the [official documentation](https://docs.python.org/3/library/venv.html). Further, we also refer users to [Miniconda](https://docs.conda.io/en/latest/miniconda.html), as an alternative to the above steps for creation of the virtual environment.
+
+To install the requirements for running evaluations as described [below](#2-evaluation-scripts):
+
+```setup
+pip3 install -r requirements.txt
+```
+
 ### Running the evaluation script
 The evaluation script can be run as follows:
 ```
@@ -110,18 +110,20 @@ Some of the analyses results that `multilspy` can provide are:
 - Finding the callers of a function or the instantiations of a class ([textDocument/references](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_references))
 - Providing type-based dereference completions ([textDocument/completion](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_completion))
 
-The file [multilspy/language_server.py](multilspy/language_server.py) provides the `multilspy` API. Several tests for `multilspy` present under [tests/multilspy/](tests/multilspy/) provide detailed usage examples for `multilspy`. The tests can be executed by running:
-```bash
-pytest tests/multilspy
+### Installation
+To install `multilspy` using pip, execute the following command:
+```
+pip install https://github.com/microsoft/monitors4codegen/archive/main.zip
 ```
 
+### Usage
 Example usage:
 ```python
 from monitors4codegen.multilspy import SyncLanguageServer
 from monitors4codegen.multilspy.multilspy_config import MultilspyConfig
 from monitors4codegen.multilspy.multilspy_logger import MultilspyLogger
 ...
-config = MultilspyConfig.from_dict({"code_language": "java"})
+config = MultilspyConfig.from_dict({"code_language": "java"}) # Also supports "python", "rust", "csharp"
 logger = MultilspyLogger()
 lsp = SyncLanguageServer.create(config, logger, "/abs/path/to/project/root/")
 with lsp.start_server():
@@ -129,6 +131,12 @@ with lsp.start_server():
         "relative/path/to/code_file.java", # Filename of location where request is being made
         163, # line number of symbol for which request is being made
         4 # column number of symbol for which request is being made
+    )
+    result2 = lsp.request_completions(
+        ...
+    )
+    result3 = lsp.request_references(
+        ...
     )
     ...
 ```
@@ -145,9 +153,14 @@ async with lsp.start_server():
     ...
 ```
 
+The file [src/monitors4codegen/multilspy/language_server.py](src/monitors4codegen/multilspy/language_server.py) provides the `multilspy` API. Several tests for `multilspy` present under [tests/multilspy/](tests/multilspy/) provide detailed usage examples for `multilspy`. The tests can be executed by running:
+```bash
+pytest tests/multilspy
+```
+
 ## 5. Monitor-Guided Decoding
 
-A monitor under the Monitor-Guided Decoding framework, is instantiated using `multilspy` as the LSP client, and as a logits-processor to guide the LM decoding. [monitor_guided_decoding/monitor.py](monitor_guided_decoding/monitor.py) provides the class `MGDLogitsProcessor` which can be used with any HuggingFace Language Model, as a `LogitsProcessor` to guide the LM using MGD. [monitor_guided_decoding/dereferences_monitor.py](monitor_guided_decoding/dereferences_monitor.py) provides the instantiation for dereferences monitor. Unit tests for the dereferences monitor are present in [tests/monitor_guided_decoding/test_dereferences_monitor_java.py](tests/monitor_guided_decoding/test_dereferences_monitor_java.py), which also provide usage examples for the dereferences monitor.
+A monitor under the Monitor-Guided Decoding framework, is instantiated using `multilspy` as the LSP client, and as a logits-processor to guide the LM decoding. [monitor_guided_decoding/monitor.py](monitor_guided_decoding/monitor.py) provides the class `MGDLogitsProcessor` which can be used with any HuggingFace Language Model, as a `LogitsProcessor` to guide the LM using MGD. [src/monitors4codegen/monitor_guided_decoding/dereferences_monitor.py](src/monitors4codegen/monitor_guided_decoding/dereferences_monitor.py) provides the instantiation for dereferences monitor. Unit tests for the dereferences monitor are present in [tests/monitor_guided_decoding/test_dereferences_monitor_java.py](tests/monitor_guided_decoding/test_dereferences_monitor_java.py), which also provide usage examples for the dereferences monitor.
 
 ## Contributing
 
