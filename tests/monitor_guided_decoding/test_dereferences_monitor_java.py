@@ -2,12 +2,13 @@
 This file contains tests for Monitor-Guided Decoding for dereferences in Java
 """
 import transformers
+import torch
 import pytest
 
 from pathlib import PurePath
 from monitors4codegen.multilspy.language_server import SyncLanguageServer
 from monitors4codegen.multilspy.multilspy_config import Language
-from tests.test_utils import create_test_context
+from tests.test_utils import create_test_context, is_cuda_available
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from monitors4codegen.multilspy.multilspy_utils import TextUtils
 from monitors4codegen.monitor_guided_decoding.dereferences_monitor import DereferencesMonitor
@@ -31,9 +32,11 @@ async def test_multilspy_java_clickhouse_highlevel_sinker() -> None:
         "repo_commit": "ee31d278918fe5e64669a6840c4d8fb53889e573",
     }
 
+    device = torch.device('cuda' if is_cuda_available() else 'cpu')
+
     model: transformers.modeling_utils.PreTrainedModel = AutoModelForCausalLM.from_pretrained(
         "bigcode/santacoder", trust_remote_code=True
-    ).cuda()
+    ).to(device) #
     tokenizer = AutoTokenizer.from_pretrained("bigcode/santacoder")
 
     with create_test_context(params) as context:
@@ -65,7 +68,7 @@ async def test_multilspy_java_clickhouse_highlevel_sinker() -> None:
                 assert filecontent[pos_idx] == "n"
                 prompt = filecontent[:pos_idx]
                 assert prompt[-1] == "."
-                prompt_tokenized = tokenizer.encode(prompt, return_tensors="pt").cuda()[:, -(2048 - 512) :]
+                prompt_tokenized = tokenizer.encode(prompt, return_tensors="pt")[:, -(2048 - 512) :].to(device)
 
                 generated_code_without_mgd = model.generate(
                     prompt_tokenized, do_sample=False, max_new_tokens=30, early_stopping=True
@@ -105,9 +108,11 @@ async def test_multilspy_java_clickhouse_highlevel_sinker_modified():
         "repo_commit": "5775fd7a67e7b60998e1614cf44a8a1fc3190ab0"
     }
 
+    device = torch.device('cuda' if is_cuda_available() else 'cpu')
+
     model: transformers.modeling_utils.PreTrainedModel = AutoModelForCausalLM.from_pretrained(
         "bigcode/santacoder", trust_remote_code=True
-    ).cuda()
+    ).to(device)
     tokenizer = AutoTokenizer.from_pretrained("bigcode/santacoder")
 
     with create_test_context(params) as context:
@@ -136,7 +141,7 @@ async def test_multilspy_java_clickhouse_highlevel_sinker_modified():
                 assert filecontent[pos_idx] == "w"
                 prompt = filecontent[:pos_idx]
                 assert prompt[-1] == "."
-                prompt_tokenized = tokenizer.encode(prompt, return_tensors="pt").cuda()[:, -(2048 - 512) :]
+                prompt_tokenized = tokenizer.encode(prompt, return_tensors="pt")[:, -(2048 - 512) :].to(device)
 
                 gen = model.generate(
                     prompt_tokenized, do_sample=False, max_new_tokens=30, early_stopping=True
@@ -195,7 +200,7 @@ async def test_multilspy_java_clickhouse_highlevel_sinker_modified():
                 assert filecontent[pos_idx] == "a"
                 prompt = filecontent[:pos_idx]
                 assert prompt[-1] == "("
-                prompt_tokenized = tokenizer.encode(prompt, return_tensors="pt").cuda()[:, -(2048 - 512) :]
+                prompt_tokenized = tokenizer.encode(prompt, return_tensors="pt")[:, -(2048 - 512) :].to(device)
 
                 gen = model.generate(
                     prompt_tokenized, do_sample=False, max_new_tokens=30, early_stopping=True
