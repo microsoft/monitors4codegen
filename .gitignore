@@ -160,4 +160,4 @@ cython_debug/
 #.idea/
 .vscode/
 
-multilspy/language_servers/*/static
+src/monitors4codegen/multilspy/language_servers/*/static
