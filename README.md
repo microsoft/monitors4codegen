@@ -30,10 +30,12 @@ MGD uses static analysis to guide the decoding of LMs, to generate code followin
 ### PragmaticCode
 PragmaticCode is a dataset of real-world open-source Java projects complete with their development environments and dependencies (through their respective build systems). The authors tried to ensure that all the repositories in PragmaticCode were released publicly only after the determined training dataset cutoff date (31 March 2022) for the CodeGen, SantaCoder and text-davinci-003 family of models, which were used to evaluate MGD.
 
-The list of repositories along with their respective licenses consisting PragmaticCode is available in [datasets/PragmaticCode/repos.csv](datasets/PragmaticCode/repos.csv). The contents of the files required for inference for each of the repositories is available in [datasets/PragmaticCode/fileContentsByRepo.json](datasets/PragmaticCode/fileContentsByRepo.json).
+The full dataset, along with repository zip files is available in our Zenodo dataset release at [https://zenodo.org/records/10072088](https://zenodo.org/records/10072088). The list of repositories along with their respective licenses consisting PragmaticCode is available in [datasets/PragmaticCode/repos.csv](datasets/PragmaticCode/repos.csv). The contents of the files required for inference for each of the repositories is available in [datasets/PragmaticCode/fileContentsByRepo.json](datasets/PragmaticCode/fileContentsByRepo.json).
 
 ### DotPrompts
-DotPrompts is a set of examples derived from PragmaticCode, such that each example consists of a prompt to a dereference location (a code location having the "." operator in Java). The scenario described in [motivating example above](#monitor-guided-decoding-motivating-example) is an example in DotPrompts. 
+DotPrompts is a set of examples derived from PragmaticCode, such that each example consists of a prompt to a dereference location (a code location having the "." operator in Java). DotPrompts can be used to benchmark Language Models of Code on their ability to utilize repository level context to generate code for method-level completion tasks. The task for the models is to complete a partially written Java method, utilizing the full repository available from PragmaticCode. Since all the repositories in PragmaticCode are buildable, DotPrompts (derived from PragmaticCode) supports Compilation Rate as a metric of evaluation for generated code, apart from standard metrics of ground truth match like Next-Identifier Match, Identifier Sequence Match and Prefix Match. 
+
+The scenario described in [motivating example above](#monitor-guided-decoding-motivating-example) is an example in DotPrompts.
 
 The complete description of an example in DotPrompts is a tuple - `(repo, classFileName, methodStartIdx, methodStopIdx, dot_idx)`. The dataset is available at [datasets/DotPrompts/dataset.csv](datasets/DotPrompts/dataset.csv).
 
@@ -160,7 +162,7 @@ pytest tests/multilspy
 
 ## 5. Monitor-Guided Decoding
 
-A monitor under the Monitor-Guided Decoding framework, is instantiated using `multilspy` as the LSP client, and as a logits-processor to guide the LM decoding. [monitor_guided_decoding/monitor.py](monitor_guided_decoding/monitor.py) provides the class `MGDLogitsProcessor` which can be used with any HuggingFace Language Model, as a `LogitsProcessor` to guide the LM using MGD. [src/monitors4codegen/monitor_guided_decoding/dereferences_monitor.py](src/monitors4codegen/monitor_guided_decoding/dereferences_monitor.py) provides the instantiation for dereferences monitor. Unit tests for the dereferences monitor are present in [tests/monitor_guided_decoding/test_dereferences_monitor_java.py](tests/monitor_guided_decoding/test_dereferences_monitor_java.py), which also provide usage examples for the dereferences monitor.
+A monitor under the Monitor-Guided Decoding framework, is instantiated using `multilspy` as the LSP client, and as a logits-processor to guide the LM decoding. [src/monitors4codegen/monitor_guided_decoding/monitor.py](src/monitors4codegen/monitor_guided_decoding/monitor.py) provides the class `MGDLogitsProcessor` which can be used with any HuggingFace Language Model, as a `LogitsProcessor` to guide the LM using MGD. [src/monitors4codegen/monitor_guided_decoding/dereferences_monitor.py](src/monitors4codegen/monitor_guided_decoding/dereferences_monitor.py) provides the instantiation for dereferences monitor. Unit tests for the dereferences monitor are present in [tests/monitor_guided_decoding/test_dereferences_monitor_java.py](tests/monitor_guided_decoding/test_dereferences_monitor_java.py), which also provide usage examples for the dereferences monitor.
 
 ## Contributing
 
