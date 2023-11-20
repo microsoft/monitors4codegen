@@ -1,9 +1,9 @@
 """
 This file contains tests for Monitor-Guided Decoding for dereferences in Java
 """
-import transformers
-import torch
 import pytest
+import torch
+import transformers
 
 from pathlib import PurePath
 from monitors4codegen.multilspy.language_server import SyncLanguageServer
@@ -12,7 +12,8 @@ from tests.test_utils import create_test_context, is_cuda_available
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from monitors4codegen.multilspy.multilspy_utils import TextUtils
 from monitors4codegen.monitor_guided_decoding.dereferences_monitor import DereferencesMonitor
-from monitors4codegen.monitor_guided_decoding.monitor import MonitorFileBuffer, MGDLogitsProcessor
+from monitors4codegen.monitor_guided_decoding.monitor import MonitorFileBuffer
+from monitors4codegen.monitor_guided_decoding.hf_gen import MGDLogitsProcessor
 from transformers.generation.utils import LogitsProcessorList
 from monitors4codegen.multilspy.multilspy_types import Position
 from monitors4codegen.monitor_guided_decoding.tokenizer_wrapper import HFTokenizerWrapper
@@ -21,7 +22,7 @@ pytest_plugins = ("pytest_asyncio",)
 
 
 @pytest.mark.asyncio
-async def test_multilspy_java_clickhouse_highlevel_sinker() -> None:
+async def test_dereferences_monitor_java_huggingface_models_clickhouse_highlevel_sinker() -> None:
     """
     Test the working of dereferences monitor with Java repository - clickhouse-highlevel-sinker
     """
@@ -95,9 +96,8 @@ async def test_multilspy_java_clickhouse_highlevel_sinker() -> None:
                     == "newServerNode()\n               .withIp(arr[0])\n               .withPort(Integer.parseInt(arr[1]))\n               .build();"
                 )
 
-
 @pytest.mark.asyncio
-async def test_multilspy_java_clickhouse_highlevel_sinker_modified():
+async def test_dereferences_monitor_java_huggingface_models_clickhouse_highlevel_sinker_modified():
     """
     Test the working of dereferences monitor with Java repository - clickhouse-highlevel-sinker modified
     """

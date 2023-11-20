@@ -2,6 +2,7 @@ import os
 import pathlib
 import contextlib
 import shutil
+import torch
 
 from monitors4codegen.multilspy.multilspy_config import MultilspyConfig
 from monitors4codegen.multilspy.multilspy_logger import MultilspyLogger
