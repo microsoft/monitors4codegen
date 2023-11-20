@@ -12,7 +12,7 @@ from monitors4codegen.multilspy.language_server import SyncLanguageServer
 from monitors4codegen.multilspy.multilspy_config import Language
 from tests.test_utils import create_test_context
 from monitors4codegen.multilspy.multilspy_utils import TextUtils
-from monitors4codegen.monitor_guided_decoding.dereferences_monitor import DereferencesMonitor
+from monitors4codegen.monitor_guided_decoding.monitors.dereferences_monitor import DereferencesMonitor
 from monitors4codegen.monitor_guided_decoding.monitor import MonitorFileBuffer
 from monitors4codegen.multilspy.multilspy_types import Position
 from monitors4codegen.monitor_guided_decoding.tokenizer_wrapper import TikTokenWrapper
