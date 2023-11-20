@@ -11,7 +11,7 @@ from monitors4codegen.multilspy.multilspy_config import Language
 from tests.test_utils import create_test_context, is_cuda_available
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from monitors4codegen.multilspy.multilspy_utils import TextUtils
-from monitors4codegen.monitor_guided_decoding.dereferences_monitor import DereferencesMonitor
+from monitors4codegen.monitor_guided_decoding.monitors.dereferences_monitor import DereferencesMonitor
 from monitors4codegen.monitor_guided_decoding.monitor import MonitorFileBuffer
 from monitors4codegen.monitor_guided_decoding.hf_gen import MGDLogitsProcessor
 from transformers.generation.utils import LogitsProcessorList
