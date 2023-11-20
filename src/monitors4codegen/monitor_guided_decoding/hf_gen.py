@@ -8,6 +8,7 @@ import torch
 from asyncio.events import AbstractEventLoop
 from typing import List, Union
 from transformers import LogitsProcessor
+from monitors4codegen.monitor_guided_decoding.monitor import Monitor
 
 class MGDLogitsProcessor(LogitsProcessor):
     """
