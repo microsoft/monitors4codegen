@@ -6,7 +6,7 @@ HF tokenizers and TikToken tokenizers
 import torch
 import tiktoken
 
-from typing import List, Union
+from typing import List, Set, Union
 from pygtrie import CharTrie
 from transformers.tokenization_utils_base import PreTrainedTokenizerBase
 
@@ -97,11 +97,11 @@ class TikTokenWrapper(TokenizerWrapper):
                 self.vocab_trie[decoded_token] = v
                 self.all_token_ids.add(v)
 
-    def decode(self, token_ids: torch.Tensor, *args, **kwargs) -> str:
+    def decode(self, token_ids: Union[List[int], torch.Tensor], *args, **kwargs) -> str:
         """
         Decodes the given token ids to a string
         """
-        token_ids, clean_up_tokenization_spaces, skip_special_tokens = None, None, None
+        clean_up_tokenization_spaces, skip_special_tokens = None, None
         if len(args) == 0:
             pass
         elif len(args) == 1:
@@ -116,10 +116,10 @@ class TikTokenWrapper(TokenizerWrapper):
 
         assert not clean_up_tokenization_spaces
         assert skip_special_tokens
-        assert isinstance(token_ids, torch.Tensor)
-        token_ids = token_ids.tolist()
+        if isinstance(token_ids, torch.Tensor):
+            token_ids = token_ids.tolist()
 
-        token_ids = [i for i in token_ids if i not in self.all_special_ids]
+        token_ids: List[int] = [i for i in token_ids if i not in self.all_special_ids]
 
         return self.tokenizer.decode(token_ids)
 

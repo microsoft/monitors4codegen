@@ -162,7 +162,17 @@ pytest tests/multilspy
 
 ## 5. Monitor-Guided Decoding
 
-A monitor under the Monitor-Guided Decoding framework, is instantiated using `multilspy` as the LSP client, and as a logits-processor to guide the LM decoding. [src/monitors4codegen/monitor_guided_decoding/monitor.py](src/monitors4codegen/monitor_guided_decoding/monitor.py) provides the class `MGDLogitsProcessor` which can be used with any HuggingFace Language Model, as a `LogitsProcessor` to guide the LM using MGD. [src/monitors4codegen/monitor_guided_decoding/dereferences_monitor.py](src/monitors4codegen/monitor_guided_decoding/dereferences_monitor.py) provides the instantiation for dereferences monitor. Unit tests for the dereferences monitor are present in [tests/monitor_guided_decoding/test_dereferences_monitor_java.py](tests/monitor_guided_decoding/test_dereferences_monitor_java.py), which also provide usage examples for the dereferences monitor.
+A monitor under the Monitor-Guided Decoding framework, is instantiated using `multilspy` as the LSP client, and provides maskgen to guide the LM decoding. The monitor interface is defined as class `Monitor` in file [src/monitors4codegen/monitor_guided_decoding/monitor.py](src/monitors4codegen/monitor_guided_decoding/monitor.py). The interface is implemented by various monitors supporting different properties like valid identifier dereferences, valid number of arguments, valid typestate method calls, etc.
+
+### MGD with HuggingFace models
+[src/monitors4codegen/monitor_guided_decoding/hf_gen.py](src/monitors4codegen/monitor_guided_decoding/hf_gen.py) provides the class `MGDLogitsProcessor` which can be used with any HuggingFace Language Model, as a [`LogitsProcessor`](https://huggingface.co/docs/transformers/internal/generation_utils#logitsprocessor) to guide the LM using MGD. Example uses with [SantaCoder](https://huggingface.co/bigcode/santacoder) model are available in [tests/monitor_guided_decoding/test_dereferences_monitor_java.py](tests/monitor_guided_decoding/test_dereferences_monitor_java.py).
+
+### MGD with OpenAI models
+[src/monitors4codegen/monitor_guided_decoding/openai_gen.py](src/monitors4codegen/monitor_guided_decoding/openai_gen.py) provides the method `openai_mgd` which takes the prompt and a `Monitor` as input, and returns the MGD guided generation using an OpenAI model.
+
+### Monitors
+#### Dereferences Monitor
+[src/monitors4codegen/monitor_guided_decoding/dereferences_monitor.py](src/monitors4codegen/monitor_guided_decoding/dereferences_monitor.py) provides the instantiation of `Monitor` class for dereferences monitor. It can be used to guide LMs to generate valid identifier dereferences. Unit tests for the dereferences monitor are present in [tests/monitor_guided_decoding/test_dereferences_monitor_java.py](tests/monitor_guided_decoding/test_dereferences_monitor_java.py), which also provide usage examples for the dereferences monitor.
 
 ## Contributing
 
