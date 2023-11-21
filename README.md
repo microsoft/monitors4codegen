@@ -140,6 +140,9 @@ with lsp.start_server():
     result3 = lsp.request_references(
         ...
     )
+    result4 = lsp.request_document_symbols(
+        ...
+    )
     ...
 ```
 
@@ -176,6 +179,9 @@ A monitor under the Monitor-Guided Decoding framework, is instantiated using `mu
 
 #### Switch-Enum Monitor
 [src/monitors4codegen/monitor_guided_decoding/monitors/switch_enum_monitor.py](src/monitors4codegen/monitor_guided_decoding/monitors/switch_enum_monitor.py) provides the instantiation of `Monitor` for generating valid named enum constants in C#. Unit tests for the switch-enum monitor are present in [tests/monitor_guided_decoding/test_switchenum_monitor_csharp.py](tests/monitor_guided_decoding/test_switchenum_monitor_csharp.py), which also provide usage examples for the switch-enum monitor.
+
+#### Class Instantiation Monitor
+[src/monitors4codegen/monitor_guided_decoding/monitors/class_instantiation_monitor.py](src/monitors4codegen/monitor_guided_decoding/monitors/class_instantiation_monitor.py) provides the instantiation of `Monitor` for generating valid class instantiations following `'new '` in a Java code base. Unit tests for the class-instantiation monitor, which provide examples usages are present in [tests/monitor_guided_decoding/test_classinstantiation_monitor_java.py](tests/monitor_guided_decoding/test_classinstantiation_monitor_java.py).
 
 ## Contributing
 
