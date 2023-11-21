@@ -48,3 +48,12 @@ class LSPConstants:
 
     # key used to represent the changes made to a document
     CONTENT_CHANGES = "contentChanges"
+
+    # key used to represent name of symbols
+    NAME = "name"
+
+    # key used to represent the kind of symbols
+    KIND = "kind"
+
+    # key used to represent children in document symbols
+    CHILDREN = "children"

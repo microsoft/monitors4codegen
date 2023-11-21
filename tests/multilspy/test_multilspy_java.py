@@ -206,3 +206,142 @@ async def test_multilspy_java_clickhouse_highlevel_sinker_modified():
                 completions = await lsp.request_completions(completions_filepath, 136, 23)
                 completions = [completion["completionText"] for completion in completions if completion["kind"] == CompletionItemKind.Constructor]
                 assert completions == ['ClickHouseSinkBuffer']
+
+@pytest.mark.asyncio
+async def test_multilspy_java_example_repo_document_symbols() -> None:
+    """
+    Test the working of multilspy with Java repository - clickhouse-highlevel-sinker
+    """
+    code_language = Language.JAVA
+    params = {
+        "code_language": code_language,
+        "repo_url": "https://github.com/LakshyAAAgrawal/ExampleRepo/",
+        "repo_commit": "f3762fd55a457ff9c6b0bf3b266de2b203a766ab",
+    }
+    with create_test_context(params) as context:
+        lsp = LanguageServer.create(context.config, context.logger, context.source_directory)
+
+        # All the communication with the language server must be performed inside the context manager
+        # The server process is started when the context manager is entered and is terminated when the context manager is exited.
+        async with lsp.start_server():
+            filepath = str(PurePath("Person.java"))
+            result = await lsp.request_document_symbols(filepath)
+
+            assert result == (
+                [
+                    {
+                        "name": "Person",
+                        "kind": 5,
+                        "range": {
+                            "start": {"line": 0, "character": 0},
+                            "end": {"line": 14, "character": 1},
+                        },
+                        "selectionRange": {
+                            "start": {"line": 1, "character": 22},
+                            "end": {"line": 1, "character": 28},
+                        },
+                        "detail": "",
+                    },
+                    {
+                        "name": "name",
+                        "kind": 8,
+                        "range": {
+                            "start": {"line": 2, "character": 4},
+                            "end": {"line": 3, "character": 24},
+                        },
+                        "selectionRange": {
+                            "start": {"line": 3, "character": 19},
+                            "end": {"line": 3, "character": 23},
+                        },
+                        "detail": "",
+                    },
+                    {
+                        "name": "Person(String)",
+                        "kind": 9,
+                        "range": {
+                            "start": {"line": 5, "character": 4},
+                            "end": {"line": 8, "character": 5},
+                        },
+                        "selectionRange": {
+                            "start": {"line": 6, "character": 11},
+                            "end": {"line": 6, "character": 17},
+                        },
+                        "detail": "",
+                    },
+                    {
+                        "name": "getName()",
+                        "kind": 6,
+                        "range": {
+                            "start": {"line": 10, "character": 4},
+                            "end": {"line": 13, "character": 5},
+                        },
+                        "selectionRange": {
+                            "start": {"line": 11, "character": 18},
+                            "end": {"line": 11, "character": 25},
+                        },
+                        "detail": " : String",
+                    },
+                ],
+                None,
+            )
+
+            filepath = str(PurePath("Student.java"))
+            result = await lsp.request_document_symbols(filepath)
+
+            assert result == (
+                [
+                    {
+                        "name": "Student",
+                        "kind": 5,
+                        "range": {
+                            "start": {"line": 0, "character": 0},
+                            "end": {"line": 16, "character": 1},
+                        },
+                        "selectionRange": {
+                            "start": {"line": 1, "character": 13},
+                            "end": {"line": 1, "character": 20},
+                        },
+                        "detail": "",
+                    },
+                    {
+                        "name": "id",
+                        "kind": 8,
+                        "range": {
+                            "start": {"line": 2, "character": 4},
+                            "end": {"line": 3, "character": 19},
+                        },
+                        "selectionRange": {
+                            "start": {"line": 3, "character": 16},
+                            "end": {"line": 3, "character": 18},
+                        },
+                        "detail": "",
+                    },
+                    {
+                        "name": "Student(String, int)",
+                        "kind": 9,
+                        "range": {
+                            "start": {"line": 5, "character": 4},
+                            "end": {"line": 10, "character": 5},
+                        },
+                        "selectionRange": {
+                            "start": {"line": 6, "character": 11},
+                            "end": {"line": 6, "character": 18},
+                        },
+                        "detail": "",
+                    },
+                    {
+                        "name": "getId()",
+                        "kind": 6,
+                        "range": {
+                            "start": {"line": 12, "character": 4},
+                            "end": {"line": 15, "character": 5},
+                        },
+                        "selectionRange": {
+                            "start": {"line": 13, "character": 15},
+                            "end": {"line": 13, "character": 20},
+                        },
+                        "detail": " : int",
+                    },
+                ],
+                None,
+            )

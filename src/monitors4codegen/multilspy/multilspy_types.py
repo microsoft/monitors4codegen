@@ -2,8 +2,10 @@
 Defines wrapper objects around the types returned by LSP to ensure decoupling between LSP versions and multilspy
 """
 
+from __future__ import annotations
+
 from enum import IntEnum
-from typing import TypedDict
+from typing_extensions import NotRequired, TypedDict, List, Dict
 
 URI = str
 DocumentUri = str
@@ -124,3 +126,86 @@ class CompletionItem(TypedDict):
     kind: CompletionItemKind
     """ The kind of this completion item. Based of the kind
     an icon is chosen by the editor. """
+
+class SymbolKind(IntEnum):
+    """A symbol kind."""
+
+    File = 1
+    Module = 2
+    Namespace = 3
+    Package = 4
+    Class = 5
+    Method = 6
+    Property = 7
+    Field = 8
+    Constructor = 9
+    Enum = 10
+    Interface = 11
+    Function = 12
+    Variable = 13
+    Constant = 14
+    String = 15
+    Number = 16
+    Boolean = 17
+    Array = 18
+    Object = 19
+    Key = 20
+    Null = 21
+    EnumMember = 22
+    Struct = 23
+    Event = 24
+    Operator = 25
+    TypeParameter = 26
+
+class SymbolTag(IntEnum):
+    """Symbol tags are extra annotations that tweak the rendering of a symbol.
+
+    @since 3.16"""
+
+    Deprecated = 1
+    """ Render a symbol as obsolete, usually using a strike-out. """
+
+class UnifiedSymbolInformation(TypedDict):
+    """Represents information about programming constructs like variables, classes,
+    interfaces etc."""
+
+    deprecated: NotRequired[bool]
+    """ Indicates if this symbol is deprecated.
+
+    @deprecated Use tags instead """
+    location: NotRequired[Location]
+    """ The location of this symbol. The location's range is used by a tool
+    to reveal the location in the editor. If the symbol is selected in the
+    tool the range's start information is used to position the cursor. So
+    the range usually spans more than the actual symbol's name and does
+    normally include things like visibility modifiers.
+
+    The range doesn't have to denote a node range in the sense of an abstract
+    syntax tree. It can therefore not be used to re-construct a hierarchy of
+    the symbols. """
+    name: str
+    """ The name of this symbol. """
+    kind: SymbolKind
+    """ The kind of this symbol. """
+    tags: NotRequired[List[SymbolTag]]
+    """ Tags for this symbol.
+
+    @since 3.16.0 """
+    containerName: NotRequired[str]
+    """ The name of the symbol containing this symbol. This information is for
+    user interface purposes (e.g. to render a qualifier in the user interface
+    if necessary). It can't be used to re-infer a hierarchy for the document
+    symbols. """
+
+    detail: NotRequired[str]
+    """ More detail for this symbol, e.g the signature of a function. """
+    
+    range: NotRequired[Range]
+    """ The range enclosing this symbol not including leading/trailing whitespace but everything else
+    like comments. This information is typically used to determine if the clients cursor is
+    inside the symbol to reveal in the symbol in the UI. """
+    selectionRange: NotRequired[Range]
+    """ The range that should be selected and revealed when this symbol is being picked, e.g the name of a function.
+    Must be contained by the `range`. """
+
+TreeRepr = Dict[int, List['TreeRepr']]
