@@ -171,8 +171,8 @@ class RustAnalyzer(LanguageServer):
                 "triggerCharacters": [":", ".", "'", "("],
                 "completionItem": {"labelDetailsSupport": True},
             }
-
             self.server.notify.initialized({})
+            self.completions_available.set()
 
             await self.server_ready.wait()
 
