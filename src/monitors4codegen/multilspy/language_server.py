@@ -26,7 +26,7 @@ from .multilspy_config import MultilspyConfig, Language
 from .multilspy_exceptions import MultilspyException
 from .multilspy_utils import PathUtils, FileUtils, TextUtils
 from pathlib import PurePath
-from typing import AsyncIterator, Iterator, List, Dict, Union
+from typing import AsyncIterator, Iterator, List, Dict, Union, Tuple
 from .type_helpers import ensure_all_methods_implemented
 
 
@@ -550,6 +550,51 @@ class LanguageServer:
                 for json_repr in set([json.dumps(item, sort_keys=True) for item in completions_list])
             ]
 
+    async def request_document_symbols(self, relative_file_path: str) -> Tuple[List[multilspy_types.UnifiedSymbolInformation], Union[List[multilspy_types.TreeRepr], None]]:
+        """
+        Raise a [textDocument/documentSymbol](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_documentSymbol) request to the Language Server
+        to find symbols in the given file. Wait for the response and return the result.
+
+        :param relative_file_path: The relative path of the file that has the symbols
+
+        :return Tuple[List[multilspy_types.UnifiedSymbolInformation], Union[List[multilspy_types.TreeRepr], None]]: A list of symbols in the file, and the tree representation of the symbols
+        """
+        with self.open_file(relative_file_path):
+            response = await self.server.send.document_symbol(
+                {
+                    "textDocument": {
+                        "uri": pathlib.Path(os.path.join(self.repository_root_path, relative_file_path)).as_uri()
+                    }
+                }
+            )
+        
+        ret: List[multilspy_types.UnifiedSymbolInformation] = []
+        l_tree = None
+        assert isinstance(response, list)
+        for item in response:
+            assert isinstance(item, dict)
+            assert LSPConstants.NAME in item
+            assert LSPConstants.KIND in item
+
+            if LSPConstants.CHILDREN in item:
+                # TODO: l_tree should be a list of TreeRepr. Define the following function to return TreeRepr as well
+                
+                def visit_tree_nodes_and_build_tree_repr(tree: LSPTypes.DocumentSymbol) -> List[multilspy_types.UnifiedSymbolInformation]:
+                    l: List[multilspy_types.UnifiedSymbolInformation] = []
+                    children = tree['children'] if 'children' in tree else []
+                    if 'children' in tree:
+                        del tree['children']
+                    l.append(multilspy_types.UnifiedSymbolInformation(**tree))
+                    for child in children:
+                        l.extend(visit_tree_nodes_and_build_tree_repr(child))
+                    return l
+                
+                ret.extend(visit_tree_nodes_and_build_tree_repr(item))
+            else:
+                ret.append(multilspy_types.UnifiedSymbolInformation(**item))
+
+        return ret, l_tree
+
 @ensure_all_methods_implemented(LanguageServer)
 class SyncLanguageServer:
     """
@@ -687,5 +732,19 @@ class SyncLanguageServer:
         result = asyncio.run_coroutine_threadsafe(
             self.language_server.request_completions(relative_file_path, line, column, allow_incomplete),
             self.loop,
+        ).result()
+        return result
+
+    def request_document_symbols(self, relative_file_path: str) -> Tuple[List[multilspy_types.UnifiedSymbolInformation], Union[List[multilspy_types.TreeRepr], None]]:
+        """
+        Raise a [textDocument/documentSymbol](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_documentSymbol) request to the Language Server
+        to find symbols in the given file. Wait for the response and return the result.
+
+        :param relative_file_path: The relative path of the file that has the symbols
+
+        :return Tuple[List[multilspy_types.UnifiedSymbolInformation], Union[List[multilspy_types.TreeRepr], None]]: A list of symbols in the file, and the tree representation of the symbols
+        """
+        result = asyncio.run_coroutine_threadsafe(
+            self.language_server.request_document_symbols(relative_file_path), self.loop
         ).result()
         return result
