@@ -503,6 +503,7 @@
             "serverStatusNotification": true,
             "colorDiagnosticOutput": true,
             "openServerLogs": true,
+            "localDocs": true,
             "commands": {
                 "commands": [
                     "rust-analyzer.runSingle",
@@ -740,11 +741,8 @@
             "merge": {
                 "glob": true
             },
-            "prefer": {
-                "no": {
-                    "std": false
-                }
-            },
+            "preferNoStd": false,
+            "preferPrelude": false,
             "prefix": "plain"
         },
         "inlayHints": {
@@ -849,6 +847,9 @@
         },
         "references": {
             "excludeImports": false
+        },
+        "rust": {
+            "analyzerTargetDir": null
         },
         "rustc": {
             "source": null

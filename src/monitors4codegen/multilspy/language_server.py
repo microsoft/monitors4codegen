@@ -518,7 +518,11 @@ class LanguageServer:
                 completion_item = {}
                 if "detail" in item:
                     completion_item["detail"] = item["detail"]
-                if "insertText" in item:
+                
+                if "label" in item:
+                    completion_item["completionText"] = item["label"]
+                    completion_item["kind"] = item["kind"]
+                elif "insertText" in item:
                     completion_item["completionText"] = item["insertText"]
                     completion_item["kind"] = item["kind"]
                 elif "textEdit" in item and "newText" in item["textEdit"]:

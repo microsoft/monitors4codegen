@@ -7,6 +7,7 @@ import pytest
 
 from monitors4codegen.multilspy import LanguageServer
 from monitors4codegen.multilspy.multilspy_config import Language
+from monitors4codegen.multilspy.multilspy_types import Position, CompletionItemKind
 from tests.test_utils import create_test_context
 from pathlib import PurePath
 
@@ -70,3 +71,41 @@ async def test_multilspy_rust_carbonyl():
                     },
                 ],
             )
+
+@pytest.mark.asyncio
+async def test_multilspy_rust_completions_mediaplayer() -> None:
+    """
+    Test the working of multilspy with Rust repository - mediaplayer
+    """
+    code_language = Language.RUST
+    params = {
+        "code_language": code_language,
+        "repo_url": "https://github.com/LakshyAAAgrawal/MediaPlayer_example/",
+        "repo_commit": "ba27bb16c7ba1d88808300364af65eb69b1d84a8",
+    }
+
+    with create_test_context(params) as context:
+        lsp = LanguageServer.create(context.config, context.logger, context.source_directory)
+        filepath = "src/playlist.rs"
+        # All the communication with the language server must be performed inside the context manager
+        # The server process is started when the context manager is entered and is terminated when the context manager is exited.
+        async with lsp.start_server():
+            with lsp.open_file(filepath):
+                deleted_text = lsp.delete_text_between_positions(
+                    filepath, Position(line=10, character=40), Position(line=12, character=4)
+                )
+                assert (
+                    deleted_text
+                    == """reset();
+        media_player1 = media_player;
+    """
+                )
+
+                response = await lsp.request_completions(filepath, 10, 40, allow_incomplete=True)
+
+                response = [item for item in response if item['kind'] != CompletionItemKind.Snippet]
+
+                for item in response:
+                    item['completionText'] = item['completionText'][:item['completionText'].find('(')]
+                
+                assert set([item['completionText'] for item in response]) == {'reset', 'into', 'try_into', 'prepare'}
