@@ -515,14 +515,15 @@ class LanguageServer:
             for item in items:
                 assert "insertText" in item or "textEdit" in item
                 assert "kind" in item
+                completion_item = {}
+                if "detail" in item:
+                    completion_item["detail"] = item["detail"]
                 if "insertText" in item:
-                    completions_list.append(
-                        multilspy_types.CompletionItem(completionText=item["insertText"], kind=item["kind"])
-                    )
+                    completion_item["completionText"] = item["insertText"]
+                    completion_item["kind"] = item["kind"]
                 elif "textEdit" in item and "newText" in item["textEdit"]:
-                    completions_list.append(
-                        multilspy_types.CompletionItem(completionText=item["textEdit"]["newText"], kind=item["kind"])
-                    )
+                    completion_item["completionText"] = item["textEdit"]["newText"]
+                    completion_item["kind"] = item["kind"]
                 elif "textEdit" in item and "range" in item["textEdit"]:
                     new_dot_lineno, new_dot_colno = (
                         completion_params["position"]["line"],
@@ -537,13 +538,16 @@ class LanguageServer:
                             == item["textEdit"]["range"]["end"]["character"],
                         )
                     )
-                    completions_list.append(
-                        multilspy_types.CompletionItem(completionText=item["textEdit"]["newText"], kind=item["kind"])
-                    )
+                    
+                    completion_item["completionText"] = item["textEdit"]["newText"]
+                    completion_item["kind"] = item["kind"]
                 elif "textEdit" in item and "insert" in item["textEdit"]:
                     assert False
                 else:
                     assert False
+
+                completion_item = multilspy_types.CompletionItem(**completion_item)
+                completions_list.append(completion_item)
 
             return [
                 json.loads(json_repr)
@@ -594,6 +598,37 @@ class LanguageServer:
                 ret.append(multilspy_types.UnifiedSymbolInformation(**item))
 
         return ret, l_tree
+    
+    async def request_hover(self, relative_file_path: str, line: int, column: int) -> Union[multilspy_types.Hover, None]:
+        """
+        Raise a [textDocument/hover](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_hover) request to the Language Server
+        to find the hover information at the given line and column in the given file. Wait for the response and return the result.
+
+        :param relative_file_path: The relative path of the file that has the hover information
+        :param line: The line number of the symbol
+        :param column: The column number of the symbol
+
+        :return None
+        """
+        with self.open_file(relative_file_path):
+            response = await self.server.send.hover(
+                {
+                    "textDocument": {
+                        "uri": pathlib.Path(os.path.join(self.repository_root_path, relative_file_path)).as_uri()
+                    },
+                    "position": {
+                        "line": line,
+                        "character": column,
+                    },
+                }
+            )
+        
+        if response is None:
+            return None
+
+        assert isinstance(response, dict)
+
+        return multilspy_types.Hover(**response)
 
 @ensure_all_methods_implemented(LanguageServer)
 class SyncLanguageServer:
@@ -746,5 +781,21 @@ class SyncLanguageServer:
         """
         result = asyncio.run_coroutine_threadsafe(
             self.language_server.request_document_symbols(relative_file_path), self.loop
+        ).result()
+        return result
+
+    def request_hover(self, relative_file_path: str, line: int, column: int) -> Union[multilspy_types.Hover, None]:
+        """
+        Raise a [textDocument/hover](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_hover) request to the Language Server
+        to find the hover information at the given line and column in the given file. Wait for the response and return the result.
+
+        :param relative_file_path: The relative path of the file that has the hover information
+        :param line: The line number of the symbol
+        :param column: The column number of the symbol
+
+        :return None
+        """
+        result = asyncio.run_coroutine_threadsafe(
+            self.language_server.request_hover(relative_file_path, line, column), self.loop
         ).result()
         return result

@@ -4,8 +4,8 @@ Defines wrapper objects around the types returned by LSP to ensure decoupling be
 
 from __future__ import annotations
 
-from enum import IntEnum
-from typing_extensions import NotRequired, TypedDict, List, Dict
+from enum import IntEnum, Enum
+from typing_extensions import NotRequired, TypedDict, List, Dict, Union
 
 URI = str
 DocumentUri = str
@@ -127,6 +127,10 @@ class CompletionItem(TypedDict):
     """ The kind of this completion item. Based of the kind
     an icon is chosen by the editor. """
 
+    detail: NotRequired[str]
+    """ A human-readable string with additional information
+    about this item, like type or symbol information. """
+
 class SymbolKind(IntEnum):
     """A symbol kind."""
 
@@ -209,3 +213,71 @@ class UnifiedSymbolInformation(TypedDict):
     Must be contained by the `range`. """
 
 TreeRepr = Dict[int, List['TreeRepr']]
+
+class MarkupKind(Enum):
+    """Describes the content type that a client supports in various
+    result literals like `Hover`, `ParameterInfo` or `CompletionItem`.
+
+    Please note that `MarkupKinds` must not start with a `$`. This kinds
+    are reserved for internal usage."""
+
+    PlainText = "plaintext"
+    """ Plain text is supported as a content format """
+    Markdown = "markdown"
+    """ Markdown is supported as a content format """
+
+class __MarkedString_Type_1(TypedDict):
+    language: str
+    value: str
+
+MarkedString = Union[str, "__MarkedString_Type_1"]
+""" MarkedString can be used to render human readable text. It is either a markdown string
+or a code-block that provides a language and a code snippet. The language identifier
+is semantically equal to the optional language identifier in fenced code blocks in GitHub
+issues. See https://help.github.com/articles/creating-and-highlighting-code-blocks/#syntax-highlighting
+
+The pair of a language and a value is an equivalent to markdown:
+```${language}
+${value}
+```
+
+Note that markdown strings will be sanitized - that means html will be escaped.
+@deprecated use MarkupContent instead. """
+
+class MarkupContent(TypedDict):
+    """A `MarkupContent` literal represents a string value which content is interpreted base on its
+    kind flag. Currently the protocol supports `plaintext` and `markdown` as markup kinds.
+
+    If the kind is `markdown` then the value can contain fenced code blocks like in GitHub issues.
+    See https://help.github.com/articles/creating-and-highlighting-code-blocks/#syntax-highlighting
+
+    Here is an example how such a string can be constructed using JavaScript / TypeScript:
+    ```ts
+    let markdown: MarkdownContent = {
+     kind: MarkupKind.Markdown,
+     value: [
+       '# Header',
+       'Some text',
+       '```typescript',
+       'someCode();',
+       '```'
+     ].join('\n')
+    };
+    ```
+
+    *Please Note* that clients might sanitize the return markdown. A client could decide to
+    remove HTML from the markdown to avoid script execution."""
+
+    kind: "MarkupKind"
+    """ The type of the Markup """
+    value: str
+    """ The content itself """
+
+class Hover(TypedDict):
+    """The result of a hover request."""
+
+    contents: Union["MarkupContent", "MarkedString", List["MarkedString"]]
+    """ The hover's content """
+    range: NotRequired["Range"]
+    """ An optional range inside the text document that is used to
+    visualize the hover, e.g. by changing the background color. """

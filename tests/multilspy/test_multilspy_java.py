@@ -345,3 +345,82 @@ async def test_multilspy_java_example_repo_document_symbols() -> None:
                 ],
                 None,
             )
+
+@pytest.mark.asyncio
+async def test_multilspy_java_clickhouse_highlevel_sinker_modified_hover():
+    """
+    Test the working of textDocument/hover with Java repository - clickhouse-highlevel-sinker modified
+    """
+    code_language = Language.JAVA
+    params = {
+        "code_language": code_language,
+        "repo_url": "https://github.com/LakshyAAAgrawal/clickhouse-highlevel-sinker/",
+        "repo_commit": "5775fd7a67e7b60998e1614cf44a8a1fc3190ab0"
+    }
+
+    with create_test_context(params) as context:
+        lsp = LanguageServer.create(context.config, context.logger, context.source_directory)
+        # All the communication with the language server must be performed inside the context manager
+        # The server process is started when the context manager is entered and is terminated when the context manager is exited.
+        # The context manager is an asynchronous context manager, so it must be used with async with.
+        async with lsp.start_server():
+            filepath = "src/main/java/com/xlvchao/clickhouse/datasource/ClickHouseDataSource.java"
+            with lsp.open_file(filepath):
+                deleted_text = lsp.delete_text_between_positions(
+                    filepath,
+                    Position(line=75, character=28),
+                    Position(line=77, character=4)
+                )
+                assert deleted_text == """arr[0], Integer.parseInt(arr[1]))
+                .build();
+    """
+
+                lsp.insert_text_at_position(filepath, 75, 28, ")")
+                
+                result = await lsp.request_hover(filepath, 75, 27)
+
+                assert result == {
+                    "contents": {
+                        "language": "java",
+                        "value": "Builder com.xlvchao.clickhouse.datasource.ServerNode.Builder.withIpPort(String ip, Integer port)",
+                    }
+                }
+
+@pytest.mark.asyncio
+async def test_multilspy_java_clickhouse_highlevel_sinker_modified_completion_method_signature():
+    """
+    Test the working of textDocument/hover with Java repository - clickhouse-highlevel-sinker modified
+    """
+    code_language = Language.JAVA
+    params = {
+        "code_language": code_language,
+        "repo_url": "https://github.com/LakshyAAAgrawal/clickhouse-highlevel-sinker/",
+        "repo_commit": "5775fd7a67e7b60998e1614cf44a8a1fc3190ab0"
+    }
+
+    with create_test_context(params) as context:
+        lsp = LanguageServer.create(context.config, context.logger, context.source_directory)
+        # All the communication with the language server must be performed inside the context manager
+        # The server process is started when the context manager is entered and is terminated when the context manager is exited.
+        # The context manager is an asynchronous context manager, so it must be used with async with.
+        async with lsp.start_server():
+            filepath = "src/main/java/com/xlvchao/clickhouse/datasource/ClickHouseDataSource.java"
+            with lsp.open_file(filepath):
+                deleted_text = lsp.delete_text_between_positions(
+                    filepath,
+                    Position(line=75, character=27),
+                    Position(line=77, character=4)
+                )
+                assert deleted_text == """(arr[0], Integer.parseInt(arr[1]))
+                .build();
+    """
+                
+                result = await lsp.request_completions(filepath, 75, 27)
+
+                assert result == [
+                    {
+                        "completionText": "withIpPort",
+                        "detail": "Builder.withIpPort(String ip, Integer port) : Builder",
+                        "kind": 2,
+                    }
+                ]
