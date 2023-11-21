@@ -113,6 +113,9 @@ Some of the analyses results that `multilspy` can provide are:
 - Finding the definition of a function or a class ([textDocument/definition](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_definition))
 - Finding the callers of a function or the instantiations of a class ([textDocument/references](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_references))
 - Providing type-based dereference completions ([textDocument/completion](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_completion))
+- Getting information displayed when hovering over symbols, like method signature ([textDocument/hover](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_hover))
+- Getting list/tree of all symbols defined in a given file, along with symbol type like class, method, etc. ([textDocument/documentSymbol](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_documentSymbol))
+- Please create an issue/PR to add any other LSP request not listed above
 
 ### Installation
 To install `multilspy` using pip, execute the following command:
@@ -143,6 +146,9 @@ with lsp.start_server():
         ...
     )
     result4 = lsp.request_document_symbols(
+        ...
+    )
+    result5 = lsp.request_hover(
         ...
     )
     ...
