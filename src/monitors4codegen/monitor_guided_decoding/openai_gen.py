@@ -133,6 +133,9 @@ def openai_mgd(
                 dot_found = True
                 break
 
+        # When "stop" sequence is sent to openai model, it will not generate text beyond the text sequence within the "stop" parameter.
+        # However, when it stops because of the "stop" sequence, the returned text does not contain the stop sequence, and only includes
+        # text upto the stop sequence. So, the following code determines if the stop sequence "." needs to be added manually.
         should_manually_add_dot = None
         if response.choices[0].finish_reason == 'stop':
             if dot_found:
