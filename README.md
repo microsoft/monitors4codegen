@@ -188,6 +188,9 @@ A monitor under the Monitor-Guided Decoding framework, is instantiated using `mu
 #### Monitor for valid number of arguments to function calls
 [src/monitors4codegen/monitor_guided_decoding/monitors/numargs_monitor.py](src/monitors4codegen/monitor_guided_decoding/monitors/numargs_monitor.py) provides the instantiation of `Monitor` class for numargs_monitor. It can be used to guide LMs to generate correct number of arguments to function calls. Unit tests, which also provide usage examples are present in [tests/monitor_guided_decoding/test_numargs_monitor_java.py](tests/monitor_guided_decoding/test_numargs_monitor_java.py).
 
+### Monitor for typestate specifications
+The typestate analysis is used to enforce that methods on an object are called in a certain order, consistent with the ordering constraints provided by the API contracts. Example usage of the typestate monitor for Rust is available in the unit test file [tests/monitor_guided_decoding/test_typestate_monitor_rust.py](tests/monitor_guided_decoding/test_typestate_monitor_rust.py).
+
 #### Switch-Enum Monitor
 [src/monitors4codegen/monitor_guided_decoding/monitors/switch_enum_monitor.py](src/monitors4codegen/monitor_guided_decoding/monitors/switch_enum_monitor.py) provides the instantiation of `Monitor` for generating valid named enum constants in C#. Unit tests for the switch-enum monitor are present in [tests/monitor_guided_decoding/test_switchenum_monitor_csharp.py](tests/monitor_guided_decoding/test_switchenum_monitor_csharp.py), which also provide usage examples for the switch-enum monitor.
 
