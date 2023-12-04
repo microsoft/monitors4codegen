@@ -52,6 +52,7 @@ class RustAnalyzer(LanguageServer):
         assert platform_id.value in [
             "linux-x64",
             "win-x64",
+            "darwin-arm64"
         ], "Only linux-x64 platform is supported for in multilspy at the moment"
 
         runtime_dependencies = d["runtimeDependencies"]
