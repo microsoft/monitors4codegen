@@ -196,7 +196,7 @@ class EclipseJDTLS(LanguageServer):
                 logger, dependency["url"], vscode_java_path, dependency["archiveType"]
             )
 
-        os.chmod(jre_path, stat.S_IEXEC)
+        # os.chmod(jre_path, stat.S_IEXEC) # this seems like a mistake, it just sets it 020
 
         assert os.path.exists(vscode_java_path)
         assert os.path.exists(jre_home_path)
@@ -277,9 +277,10 @@ class EclipseJDTLS(LanguageServer):
         assert d["initializationOptions"]["bundles"] == ["intellicode-core.jar"]
         bundles = [self.runtime_dependency_paths.intellicode_jar_path]
         d["initializationOptions"]["bundles"] = bundles
-
+        # breakpoint()
+        # print(d["initializationOptions"]["settings"]["java"]["configuration"]["runtimes"])
         assert d["initializationOptions"]["settings"]["java"]["configuration"]["runtimes"] == [
-            {"name": "JavaSE-17", "path": "static/vscode-java/extension/jre/17.0.8.1-linux-x86_64", "default": True}
+            {"name": "JavaSE-17", "path": "static/vscode-java/extension/jre/java-17-openjdk-amd64", "default": True}
         ]
         d["initializationOptions"]["settings"]["java"]["configuration"]["runtimes"] = [
             {"name": "JavaSE-17", "path": self.runtime_dependency_paths.jre_home_path, "default": True}
@@ -359,9 +360,25 @@ class EclipseJDTLS(LanguageServer):
         self.server.on_notification("language/status", lang_status_handler)
         self.server.on_notification("window/logMessage", window_log_message)
         self.server.on_request("workspace/executeClientCommand", execute_client_command_handler)
-        self.server.on_notification("$/progress", do_nothing)
+
+        async def log_progress(msg):
+            # breakpoint()
+            self.logger.log(f"PROGRESS: LSP: $/progress: {msg}", logging.INFO)
+            return
+        self.server.on_notification("$/progress", log_progress)
         self.server.on_notification("textDocument/publishDiagnostics", do_nothing)
         self.server.on_notification("language/actionableNotification", do_nothing)
+
+        async def workspace_configuration_handler(params):
+            # TODO: We do not know the appropriate way to handle this request. Should ideally contact the OmniSharp dev team
+            return [
+                {
+                    "params": params
+                }
+            ]
+
+        self.server.on_request("workspace/configuration", workspace_configuration_handler)
+
 
         async with super().start_server():
             self.logger.log("Starting EclipseJDTLS server process", logging.INFO)
@@ -373,6 +390,8 @@ class EclipseJDTLS(LanguageServer):
                 logging.INFO,
             )
             init_response = await self.server.send.initialize(initialize_params)
+            # breakpoint()
+            # self.logger.log(json.dumps(initialize_params), logging.DEBUG)
             assert init_response["capabilities"]["textDocumentSync"]["change"] == 2
             assert "completionProvider" not in init_response["capabilities"]
             assert "executeCommandProvider" not in init_response["capabilities"]

@@ -3,6 +3,7 @@ Multilspy logger module.
 """
 import inspect
 import logging
+import sys
 from datetime import datetime
 from pydantic import BaseModel
 
@@ -25,7 +26,13 @@ class MultilspyLogger:
 
     def __init__(self) -> None:
         self.logger = logging.getLogger("multilspy")
-        self.logger.setLevel(logging.INFO)
+        self.logger.setLevel(logging.DEBUG)
+
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        self.logger.addHandler(handler)
 
     def log(self, debug_message: str, level: int, sanitized_error_message: str = "") -> None:
         """

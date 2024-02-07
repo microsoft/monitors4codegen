@@ -88,6 +88,8 @@ def make_notification(method: str, params: PayloadLike) -> StringDict:
 
 
 def make_request(method: str, request_id: Any, params: PayloadLike) -> StringDict:
+    # breakpoint()
+    #print({"method": method, "id": request_id, "params": params})
     return {"jsonrpc": "2.0", "method": method, "id": request_id, "params": params}
 
 
@@ -211,7 +213,7 @@ class LanguageServerHandler:
             env=child_proc_env,
             cwd=self.process_launch_info.cwd,
         )
-
+#        breakpoint()
         self.loop = asyncio.get_event_loop()
         self.tasks[self.task_counter] = self.loop.create_task(self.run_forever())
         self.task_counter += 1
@@ -412,6 +414,7 @@ class LanguageServerHandler:
         """
         Handle the response received from the server for a request, using the id to determine the request
         """
+#        breakpoint()
         request = self._response_handlers.pop(response["id"])
         if "result" in response and "error" not in response:
             await request.on_result(response["result"])
