@@ -331,6 +331,49 @@ class LanguageServer:
         file_buffer = self.open_file_buffers[uri]
         return file_buffer.contents
 
+    async def request_code_action(
+        self, relative_file_path: str, line: int, column: int):
+        """
+        Send a https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_codeAction request to the Language server
+        for the given line and column in the given file.
+
+        :param relative_file_path: The relative path of the file that has the symbol for which definition should be looked up
+        :param line: The line number of the symbol
+        :param column: The column number of the symbol
+
+        :return List[multilspy_types.Location]: A list of locations where the symbol is defined
+        """
+
+        if not self.server_started:
+            self.logger.log(
+                "find_function_definition called before Language Server started",
+                logging.ERROR,
+            )
+            raise MultilspyException("Language Server not started")
+
+        with self.open_file(relative_file_path):
+            # sending request to the language server and waiting for response
+            response = await self.server.send.code_action(
+                {
+                    LSPConstants.TEXT_DOCUMENT: {
+                        LSPConstants.URI: pathlib.Path(
+                            str(PurePath(self.repository_root_path, relative_file_path))
+                        ).as_uri()
+                    },
+                    LSPConstants.RANGE: {
+                        "start": {"line": 106, "character": 13},
+                        "end": {"line": 106, "character": 24},
+                    },
+                    "context": {
+                        "diagnostics": {
+                            "foo": "bar"
+                        }
+                    }
+                }
+            )
+#        breakpoint()
+        return response
+
     async def request_definition(
         self, relative_file_path: str, line: int, column: int
     ) -> List[multilspy_types.Location]:
@@ -722,6 +765,12 @@ class SyncLanguageServer:
         asyncio.run_coroutine_threadsafe(ctx.__aexit__(None, None, None), loop=self.loop).result()
         self.loop.call_soon_threadsafe(self.loop.stop)
         loop_thread.join()
+
+    def request_code_action(self, file_path: str, line: int, column: int):
+        result = asyncio.run_coroutine_threadsafe(
+            self.language_server.request_code_action(file_path, line, column), self.loop
+        ).result()
+        return result
 
     def request_definition(self, file_path: str, line: int, column: int) -> List[multilspy_types.Location]:
         """
