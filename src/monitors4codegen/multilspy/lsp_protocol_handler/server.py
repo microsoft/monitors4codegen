@@ -89,7 +89,7 @@ def make_notification(method: str, params: PayloadLike) -> StringDict:
 
 def make_request(method: str, request_id: Any, params: PayloadLike) -> StringDict:
     # breakpoint()
-    #print({"method": method, "id": request_id, "params": params})
+    # print({"method": method, "id": request_id, "params": params})
     return {"jsonrpc": "2.0", "method": method, "id": request_id, "params": params}
 
 

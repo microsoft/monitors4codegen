@@ -374,6 +374,23 @@ class LanguageServer:
 #        breakpoint()
         return response
 
+    async def execute_command(self, command: str, abs_file_path: str):
+        if not self.server_started:
+            self.logger.log(
+                "find_function_definition called before Language Server started",
+                logging.ERROR,
+            )
+            raise MultilspyException("Language Server not started")
+        file_uri = f'file://{abs_file_path}'
+        response = await self.server.send.execute_command(
+            {
+                "command": command,
+                "arguments": [file_uri],
+            }
+        )
+#       breakpoint()
+        return response
+
     async def request_definition(
         self, relative_file_path: str, line: int, column: int
     ) -> List[multilspy_types.Location]:
@@ -769,6 +786,12 @@ class SyncLanguageServer:
     def request_code_action(self, file_path: str, line: int, column: int):
         result = asyncio.run_coroutine_threadsafe(
             self.language_server.request_code_action(file_path, line, column), self.loop
+        ).result()
+        return result
+
+    def execute_command(self, command: str, abs_file_path: str):
+        result = asyncio.run_coroutine_threadsafe(
+            self.language_server.execute_command(command=command, abs_file_path=abs_file_path), self.loop
         ).result()
         return result
 

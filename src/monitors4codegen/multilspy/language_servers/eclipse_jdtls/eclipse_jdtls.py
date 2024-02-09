@@ -23,6 +23,7 @@ from monitors4codegen.multilspy.multilspy_settings import MultilspySettings
 from monitors4codegen.multilspy.multilspy_utils import FileUtils
 from monitors4codegen.multilspy.multilspy_utils import PlatformUtils
 from pathlib import PurePath
+from monitors4codegen.multilspy.lsp_protocol_handler.lsp_types import ApplyWorkspaceEditResult
 
 
 @dataclasses.dataclass
@@ -333,6 +334,7 @@ class EclipseJDTLS(LanguageServer):
                         " ",
                     ]
                     self.completions_available.set()
+#                breakpoint()
                 if registration["method"] == "workspace/executeCommand":
                     if "java.intellicode.enable" in registration["registerOptions"]["commands"]:
                         self.intellicode_enable_command_available.set()
@@ -360,6 +362,12 @@ class EclipseJDTLS(LanguageServer):
         self.server.on_notification("language/status", lang_status_handler)
         self.server.on_notification("window/logMessage", window_log_message)
         self.server.on_request("workspace/executeClientCommand", execute_client_command_handler)
+
+        async def execute_workspace_apply_edit(params):
+            print("execute_workspace_apply_edit " + json.dumps(params))
+            return ApplyWorkspaceEditResult(applied=True)
+
+        self.server.on_request("workspace/applyEdit", execute_workspace_apply_edit)
 
         async def log_progress(msg):
             # breakpoint()
@@ -390,7 +398,7 @@ class EclipseJDTLS(LanguageServer):
                 logging.INFO,
             )
             init_response = await self.server.send.initialize(initialize_params)
-            # breakpoint()
+            #breakpoint()
             # self.logger.log(json.dumps(initialize_params), logging.DEBUG)
             assert init_response["capabilities"]["textDocumentSync"]["change"] == 2
             assert "completionProvider" not in init_response["capabilities"]
