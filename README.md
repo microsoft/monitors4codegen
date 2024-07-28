@@ -200,6 +200,17 @@ The typestate analysis is used to enforce that methods on an object are called i
 ### Joint Monitoring
 Multiple monitors can be used simultaneously to guide LMs to adhere to multiple properties. Example demonstration with 2 monitors used jointly are present in [tests/monitor_guided_decoding/test_joint_monitors.py](tests/monitor_guided_decoding/test_joint_monitors.py).
 
+## Frequently Asked Questions (FAQ)
+### ```asyncio``` related Runtime error when executing the tests for MGD
+If you get the following error:
+```
+RuntimeError: Task <Task pending name='Task-2' coro=<_AsyncGeneratorContextManager.__aenter__() running at
+    python3.8/contextlib.py:171> cb=[_chain_future.<locals>._call_set_state() at
+    python3.8/asyncio/futures.py:367]> got Future <Future pending> attached to a different loop python3.8/asyncio/locks.py:309: RuntimeError
+```
+
+Please ensure that you create a new environment with Python ```>=3.10```. For further details, please have a look at the [StackOverflow Discussion](https://stackoverflow.com/questions/73599594/asyncio-works-in-python-3-10-but-not-in-python-3-8).
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
