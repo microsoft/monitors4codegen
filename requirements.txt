@@ -15,4 +15,4 @@ openai==1.3.3
 code-tokenize==0.2.0
 code-ast @ git+https://github.com/cedricrupb/code_ast@982940d04b1d721e5ac9a97d433f36d1fb47e8e0
 --extra-index-url https://download.pytorch.org/whl/cu113
-torch==1.12.0+cu113
+torch==1.13.1
